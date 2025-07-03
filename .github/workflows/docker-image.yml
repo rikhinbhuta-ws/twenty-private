@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  REGISTRY: rikhinbhutaws
+  IMAGE_NAME: rikhinbhutaws-private-registry
+
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -27,10 +31,22 @@ jobs:
         name: Checkout repository
         uses: actions/checkout@v4
       -
+        name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha
+      -
         name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./packages/twenty-docker/twenty/Dockerfile
           push: true
-          tags: rikhinbhutaws/rikhinbhutaws-private-registry:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
