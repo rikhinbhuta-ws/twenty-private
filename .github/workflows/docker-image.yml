@@ -33,4 +33,4 @@ jobs:
           context: .
           file: ./packages/twenty-docker/twenty/Dockerfile
           push: true
-          tags: user/app:latest
+          tags: rikhinbhutaws/rikhinbhutaws-private-registry:latest
